@@ -4,7 +4,7 @@ const router = new Router();
 
 module.exports = router;
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
     const { rows } = await db.query('SELECT title, body, id FROM public."Post"')
     res.status(200).json(rows);
 })
