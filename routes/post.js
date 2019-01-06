@@ -5,7 +5,7 @@ const router = new Router();
 module.exports = router;
 
 const tr = (func) => async (req, res) => {
-    const client = await pool.connect();
+    const client = await db.connect();
     try{
         await client.query('BEGIN');
         await func(client, req, res);
@@ -30,7 +30,7 @@ router.get('/', async (req, res) =>{
     res.status(200).json(rows);
 })
 
-router.post('/', tr(async (client, req, res) => {
+router.post('/', tr( async (client, req, res) => {
     const { rows } = await client.query(insert);
     res.status(200).json(rows);
 }));
