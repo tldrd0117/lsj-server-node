@@ -28,14 +28,31 @@ const insert = (type, title, body) => ({
     values: [type, title, body]
 })
 
-router.get('/', async (req, res) =>{
-    console.log(req);
-    const { rows } = await db.query(selectAll(req.body.type))
-    res.status(200).json(rows);
-})
+const BLOG = {
+    path: '/blog',
+    type: 1
+};
+const BOARD = {
+    path: '/board',
+    type: 2
+}
 
-router.post('/', tr( async (client, req, res) => {
-    const { rows } = await client.query(insert(req.body.type, req.body.title, req.body.body));
-    res.status(200).json(rows);
-}));
+const selectDef = (obj) => {
+    router.get(obj.path, async (req, res) =>{
+        const { rows } = await db.query(selectAll(obj.type))
+        res.status(200).json(rows);
+    })
+} 
+const insertDef = (obj) => {
+    router.post(obj.path, tr( async (client, req, res) => {
+        const { rows } = await client.query(insert(obj.type, req.body.title, req.body.body));
+        res.status(200).json(rows);
+    }));
+}
+
+selectDef(BLOG);
+selectDef(BOARD);
+insertDef(BLOG);
+insertDef(BOARD);
+
 
