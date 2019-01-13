@@ -19,16 +19,17 @@ const tr = (func) => async (req, res) => {
     
 }
 
-const selectAll = ()=>({
-    text: 'SELECT title, body, id FROM public."Post"'
+const selectAll = (type)=>({
+    text: 'SELECT title, body, id FROM Post where type=$1 ORDER BY id DESC',
+    values: [type]
 });
-const insert = (title, body) => ({
-    text: 'INSERT INTO public."Post"(title, body) VALUES ($1, $2) RETURNING id',
-    values: [title, body]
+const insert = (type, title, body) => ({
+    text: 'INSERT INTO Post(type, title, body) VALUES ($1, $2, $3) RETURNING id',
+    values: [type, title, body]
 })
 
 router.get('/', async (req, res) =>{
-    const { rows } = await db.query(selectAll())
+    const { rows } = await db.query(selectAll(req.body.type))
     res.status(200).json(rows);
 })
 
