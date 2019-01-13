@@ -9,6 +9,7 @@ const tr = (func) => async (req, res) => {
     try{
         await client.query('BEGIN');
         await func(client, req, res);
+        await client.query('COMMIT');
     } catch (e) {
         await client.query('ROLLBACK')
         throw e
@@ -26,12 +27,12 @@ const insert = (title, body) => ({
 })
 
 router.get('/', async (req, res) =>{
-    const { rows } = await db.query(selectAll)
+    const { rows } = await db.query(selectAll())
     res.status(200).json(rows);
 })
 
 router.post('/', tr( async (client, req, res) => {
-    const { rows } = await client.query(insert);
+    const { rows } = await client.query(insert());
     res.status(200).json(rows);
 }));
 
