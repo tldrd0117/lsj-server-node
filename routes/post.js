@@ -45,6 +45,7 @@ const selectDef = (obj) => {
 } 
 const insertDef = (obj) => {
     router.post(obj.path, tr( async (client, req, res) => {
+        console.log(req.body);
         const { rows } = await client.query(insert(obj.type, req.body.title, req.body.body));
         res.status(200).json(rows);
     }));
