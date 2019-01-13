@@ -16,6 +16,7 @@ const tr = (func) => async (req, res) => {
     } finally {
         client.release()
     }
+    
 }
 
 const selectAll = ()=>({
@@ -32,7 +33,7 @@ router.get('/', async (req, res) =>{
 })
 
 router.post('/', tr( async (client, req, res) => {
-    const { rows } = await client.query(insert());
+    const { rows } = await client.query(insert(req.body.title, req.body.body));
     res.status(200).json(rows);
 }));
 
