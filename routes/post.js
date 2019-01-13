@@ -29,6 +29,7 @@ const insert = (type, title, body) => ({
 })
 
 router.get('/', async (req, res) =>{
+    console.log(req);
     const { rows } = await db.query(selectAll(req.body.type))
     res.status(200).json(rows);
 })
