@@ -20,12 +20,12 @@ const tr = (func) => async (req, res) => {
 }
 
 const selectAll = (type)=>({
-    text: 'SELECT title, body, id FROM Post where type=$1 ORDER BY id DESC',
+    text: 'SELECT title, body, id, create_time, author, tags FROM Post where type=$1 ORDER BY id DESC',
     values: [type]
 });
-const insert = (type, title, body) => ({
-    text: 'INSERT INTO Post(type, title, body) VALUES ($1, $2, $3) RETURNING id',
-    values: [type, title, body]
+const insert = (obj) => ({
+    text: 'INSERT INTO Post(type, title, body, author, tags) VALUES ($1, $2, $3, $4, $5) RETURNING id',
+    values: [obj.type, obj.title, obj.body, obj.author, obj.tags]
 })
 
 const BLOG = {
@@ -45,8 +45,15 @@ const selectDef = (obj) => {
 } 
 const insertDef = (obj) => {
     router.post(obj.path, tr( async (client, req, res) => {
-        console.log(req.body);
-        const { rows } = await client.query(insert(obj.type, req.body.title, req.body.body));
+        const { rows } = await client.query(
+            insert({
+                type: obj.type, 
+                title: req.body.title, 
+                body: req.body.body,
+                author: req.body.author,
+                tags: req.body.tags
+            })
+        );
         res.status(200).json(rows);
     }));
 }
