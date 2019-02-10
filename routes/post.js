@@ -18,9 +18,9 @@ const tr = (func) => async (req, res) => {
     }
     
 }
-
+//to_char(create_time, 'YYYY-MM-DD HH24:MI:SS') as create_time
 const selectAll = (type)=>({
-    text: "SELECT title, body, id, to_char(create_time, 'YYYY-MM-DD HH24:MI:SS') as create_time, author, tags FROM Post where type=$1 ORDER BY id DESC",
+    text: "SELECT title, body, id, create_time, author, tags FROM Post where type=$1 ORDER BY id DESC",
     values: [type]
 });
 const insert = (obj) => ({
