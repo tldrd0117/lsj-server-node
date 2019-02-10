@@ -20,7 +20,7 @@ const tr = (func) => async (req, res) => {
 }
 
 const selectAll = (type)=>({
-    text: "SELECT title, body, id, to_char(create_time, 'YYYY-MM-DD HH24:MI:SS') as create_time, author, tags FROM Post where type=$1 ORDER BY id DESC",
+    text: "SELECT title, body, id, to_char(create_time, 'YYYY-MM-DD HH24:MI:SS tz') as create_time, author, tags FROM Post where type=$1 ORDER BY id DESC",
     values: [type]
 });
 const insert = (obj) => ({
@@ -39,7 +39,9 @@ const BOARD = {
 
 const selectDef = (obj) => {
     router.get(obj.path, async (req, res) =>{
-        const { rows } = await db.query(selectAll(obj.type))
+        const { rows } = await db.query(
+            selectAll(obj.type)
+        );
         res.status(200).json(rows);
     })
 } 
