@@ -7,7 +7,7 @@ class Client {
         this.router = router;
         this.db = db;
     }
-    async queryInTr(client, req, res, getObj) {
+    async queryWithTr(client, req, res, getObj) {
         const client = await this.db.connect();
         try{
             await client.query('BEGIN');
