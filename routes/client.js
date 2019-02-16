@@ -9,44 +9,49 @@ class Client {
     }
     tr(func){
         return async (req, res) => {
-            const client = await this.db.connect();
-            try{
-                await client.query('BEGIN');
                 await func(client, req, res);
-                await client.query('COMMIT');
-            } catch (e) {
-                await client.query('ROLLBACK')
-                throw e
-            } finally {
-                client.release()
-            };
+                
         }
+    }
+
+    queryInTr(client, req, res, getObj) {
+        const client = await this.db.connect();
+        try{
+            await client.query('BEGIN');
+            const { rows } = await client.query(getObj(req));
+            await client.query('COMMIT');
+            res.status(200).json(rows);
+
+        } catch (e) {
+            await client.query('ROLLBACK')
+            throw e
+            res.status(500).send('error: ' + e)
+        } finally {
+            client.release()
+        };
     }
     
     post (path, getObj) {
-        this.router.post(path, this.tr( async (client, req, res) => {
-            const { rows } = await client.query(getObj(req).query);
-            res.status(200).json(rows);
-        }));
+        this.router.post(path, async (client, req, res) => {
+            this.queryInTr(client, req, res, getObj);
+        });
     }
 
     put (path, getObj) {
-        this.router.put(path, this.tr( async (client, req, res) => {
-            const { rows } = await client.query(getObj(req).query);
-            res.status(200).json(rows);
-        }));
+        this.router.put(path, async (client, req, res) => {
+            this.queryInTr(client, req, res, getObj);
+        });
     }
 
     delete (path, getObj) {
         this.router.delete(path, this.tr( async (client, req, res) => {
-            const { rows } = await client.query(getObj(req).query);
-            res.status(200).json(rows);
+            this.queryInTr(client, req, res, getObj);
         }));
     }
 
     get (path, getObj) {
         this.router.get(path, async (req, res) =>{
-            const { rows } = await this.db.query(getObj(req).query);
+            const { rows } = await this.db.query(getObj(req));
             res.status(200).json(rows);
         })
     }
