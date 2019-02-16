@@ -7,7 +7,7 @@ class Client {
         this.router = router;
         this.db = db;
     }
-    async queryWithTr(client, req, res, getObj) {
+    async queryWithTr(req, res, getObj) {
         const dbClient = await this.db.connect();
         try{
             await dbClient.query('BEGIN');
@@ -25,20 +25,20 @@ class Client {
     }
     
     post (path, getObj) {
-        this.router.post(path, async (client, req, res) => {
-            await this.queryWithTr(client, req, res, getObj);
+        this.router.post(path, async (req, res, next) => {
+            await this.queryWithTr(req, res, getObj);
         });
     }
 
     put (path, getObj) {
-        this.router.put(path, async (client, req, res) => {
-            await this.queryWithTr(client, req, res, getObj);
+        this.router.put(path, async (req, res, next) => {
+            await this.queryWithTr(req, res, getObj);
         });
     }
 
     delete (path, getObj) {
-        this.router.delete(path, async (client, req, res) => {
-            await this.queryWithTr(client, req, res, getObj);
+        this.router.delete(path, async (req, res, next) => {
+            await this.queryWithTr(req, res, getObj);
         });
     }
 
