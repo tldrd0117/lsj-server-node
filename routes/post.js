@@ -29,7 +29,7 @@ const insert = (obj) => ({
 })
 
 const update = (obj) => ({
-    text: 'UPDATE Post SET type=$1, title=$2, body=$3, author=$4, tags=$5 update_time=now() where id=$6 RETURNING id',
+    text: 'UPDATE Post SET type=$1, title=$2, body=$3, author=$4, tags=$5, update_time=now() where id=$6 RETURNING id',
     values: [obj.type, obj.title, obj.body, obj.author, obj.tags, obj.id]
 })
 
