@@ -20,21 +20,21 @@ class Client {
     }
     
     post (path, getObj) {
-        this.router.post(path, tr( async (client, req, res) => {
+        this.router.post(path, this.tr( async (client, req, res) => {
             const { rows } = await client.query(getObj(req).query);
             res.status(200).json(rows);
         }));
     }
 
     put (path, getObj) {
-        this.router.put(path, tr( async (client, req, res) => {
+        this.router.put(path, this.tr( async (client, req, res) => {
             const { rows } = await client.query(getObj(req).query);
             res.status(200).json(rows);
         }));
     }
 
     delete (path, getObj) {
-        this.router.delete(path, tr( async (client, req, res) => {
+        this.router.delete(path, this.tr( async (client, req, res) => {
             const { rows } = await client.query(getObj(req).query);
             res.status(200).json(rows);
         }));
