@@ -7,13 +7,6 @@ class Client {
         this.router = router;
         this.db = db;
     }
-    tr(func){
-        return async (req, res) => {
-                await func(client, req, res);
-                
-        }
-    }
-
     async queryInTr(client, req, res, getObj) {
         const client = await this.db.connect();
         try{
@@ -23,9 +16,9 @@ class Client {
             res.status(200).json(rows);
 
         } catch (e) {
-            await client.query('ROLLBACK')
-            throw e
-            res.status(500).send('error: ' + e)
+            await client.query('ROLLBACK');
+            res.status(500).send('error: ' + e);
+            throw e;
         } finally {
             client.release()
         };
@@ -33,20 +26,20 @@ class Client {
     
     post (path, getObj) {
         this.router.post(path, async (client, req, res) => {
-            this.queryInTr(client, req, res, getObj);
+            await this.queryWithTr(client, req, res, getObj);
         });
     }
 
     put (path, getObj) {
         this.router.put(path, async (client, req, res) => {
-            this.queryInTr(client, req, res, getObj);
+            await this.queryWithTr(client, req, res, getObj);
         });
     }
 
     delete (path, getObj) {
-        this.router.delete(path, this.tr( async (client, req, res) => {
-            this.queryInTr(client, req, res, getObj);
-        }));
+        this.router.delete(path, async (client, req, res) => {
+            await this.queryWithTr(client, req, res, getObj);
+        });
     }
 
     get (path, getObj) {
