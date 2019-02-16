@@ -3,7 +3,7 @@ const router = new Router();
 const db = require('../db');
 
 class Client {
-    constructor(){
+    constructor({router, db}){
         this.router = router;
         this.db = db;
     }
@@ -52,4 +52,4 @@ class Client {
     }
 }
 
-module.exports = Client
+module.exports = new Client({router, db})

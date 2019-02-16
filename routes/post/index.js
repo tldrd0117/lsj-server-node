@@ -1,9 +1,7 @@
-
 const query = require('./query')
-const Client = require('../client.js');
-const client = new Client();
+const client = require('../client.js');
 
-module.exports = router;
+module.exports = client.router;
 
 //to_char(create_time, 'YYYY-MM-DD HH24:MI:SS') as create_time
 //BLOG 1 BOARD 2
