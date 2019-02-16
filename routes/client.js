@@ -8,19 +8,19 @@ class Client {
         this.db = db;
     }
     async queryWithTr(client, req, res, getObj) {
-        const client = await this.db.connect();
+        const dbClient = await this.db.connect();
         try{
-            await client.query('BEGIN');
-            const { rows } = await client.query(getObj(req));
-            await client.query('COMMIT');
+            await dbClient.query('BEGIN');
+            const { rows } = await dbClient.query(getObj(req));
+            await dbClient.query('COMMIT');
             res.status(200).json(rows);
 
         } catch (e) {
-            await client.query('ROLLBACK');
+            await dbClient.query('ROLLBACK');
             res.status(500).send('error: ' + e);
             throw e;
         } finally {
-            client.release()
+            dbClient.release()
         };
     }
     
