@@ -1,9 +1,7 @@
-const Router = require('express-promise-router');
-const db = require('../../db');
+
 const query = require('./query')
 const Client = require('../client.js');
-const router = new Router();
-const client = new Client(router);
+const client = new Client();
 
 module.exports = router;
 

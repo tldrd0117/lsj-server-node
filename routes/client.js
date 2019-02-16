@@ -1,11 +1,15 @@
+const Router = require('express-promise-router');
+const router = new Router();
+const db = require('../db');
 
 class Client {
-    constructor(router){
+    constructor(){
         this.router = router;
+        this.db = db;
     }
     tr(func){
         return async (req, res) => {
-            const client = await db.connect();
+            const client = await this.db.connect();
             try{
                 await client.query('BEGIN');
                 await func(client, req, res);
@@ -42,7 +46,7 @@ class Client {
 
     get (path, getObj) {
         this.router.get(path, async (req, res) =>{
-            const { rows } = await db.query(getObj(req).query);
+            const { rows } = await this.db.query(getObj(req).query);
             res.status(200).json(rows);
         })
     }
