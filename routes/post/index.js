@@ -33,7 +33,7 @@ client.post('/board', req => query.insert({
     tags: req.body.tags
 }))
 
-client.put('/blog', req => query.update({
+client.post('/blog/update', req => query.update({
     type: BLOG_TYPE, 
     title: req.body.title, 
     body: req.body.body,
@@ -42,7 +42,7 @@ client.put('/blog', req => query.update({
     id: req.body.id
 }))
 
-client.put('/board', req => query.update({
+client.post('/board/update', req => query.update({
     type: BOARD_TYPE, 
     title: req.body.title, 
     body: req.body.body,
@@ -51,10 +51,10 @@ client.put('/board', req => query.update({
     id: req.body.id
 }))
 
-client.delete('/blog', req => query.deleteQry({
+client.post('/blog/delete', req => query.deleteQry({
     id: req.body.id
 }))
 
-client.delete('/board', req => query.deleteQry({
+client.post('/board/delete', req => query.deleteQry({
     id: req.body.id
 }))
