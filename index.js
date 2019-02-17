@@ -10,6 +10,11 @@ const bodyParser = require('body-parser');
 
 app.use(bodyParser.json());
 app.use(cors());
+//body logger
+app.use((req, res, next) => {
+    console.log(req.body)
+    next()
+})
 
 mountRoutes(app);
 
