@@ -4,8 +4,11 @@ const selectAll = (obj)=>({
                 body, 
                 id, 
                 create_time, 
+                update_time, 
                 author, 
-                tags 
+                tags,
+                likenum,
+                view
             FROM Post 
             WHERE type=$1 
             ORDER BY id DESC`,
