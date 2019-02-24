@@ -1,0 +1,23 @@
+ Schema |    Name     |   Type   |     Owner
+--------+-------------+----------+----------------
+ public | Post_id_seq | sequence | ilpbqrcqvkseil
+ public | post        | table    | ilpbqrcqvkseil
+ public | post_id_seq | sequence | ilpbqrcqvkseil
+(3 rows)
+
+lsj-app::DATABASE-> \d post
+                                         Table "public.post"
+   Column    |            Type             | Collation | Nullable |             Default
+-------------+-----------------------------+-----------+----------+----------------------------------
+ id          | integer                     |           | not null | nextval('post_id_seq'::regclass)
+ type        | integer                     |           | not null |
+ title       | text                        |           | not null |
+ body        | text                        |           | not null |
+ create_time | timestamp without time zone |           | not null | CURRENT_TIMESTAMP
+ author      | text                        |           |          | 'lsj'::text
+ tags        | text                        |           |          |
+ update_time | timestamp without time zone |           |          |
+ view        | integer                     |           |          |
+ likenum     | integer                     |           |          |
+Indexes:
+    "post_pkey" PRIMARY KEY, btree (id)

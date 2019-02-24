@@ -38,9 +38,26 @@ const deleteQry = (obj) => ({
     values: [obj.id]
 })
 
+const view = (obj) => ({
+    text: `UPDATE Post
+            SET view=view+1
+            WHERE id=$1
+            RETURNING id`,
+    values: [obj.id]
+})
+const like = (obj) => ({
+    text: `UPDATE Post
+            SET likenum=likenum+1
+            WHERE id=$1
+            RETURNING id`,
+    values: [obj.id]
+})
+
 module.exports = {
     selectAll,
     insert,
     update,
-    deleteQry
+    deleteQry,
+    view,
+    like
 }

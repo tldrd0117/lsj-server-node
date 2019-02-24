@@ -58,3 +58,11 @@ client.post('/blog/delete', req => query.deleteQry({
 client.post('/board/delete', req => query.deleteQry({
     id: req.body.id
 }))
+
+client.post('/board/view', req => query.view({
+    id: req.body.id
+}))
+
+client.post('/board/likenum', req => query.view({
+    id: req.body.id
+}))
