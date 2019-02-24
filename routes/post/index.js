@@ -33,8 +33,7 @@ client.post('/board', req => query.insert({
     tags: req.body.tags
 }))
 
-client.post('/blog/update', req => query.update({
-    type: BLOG_TYPE, 
+client.post('/update', req => query.update({
     title: req.body.title, 
     body: req.body.body,
     author: req.body.author,
@@ -42,27 +41,14 @@ client.post('/blog/update', req => query.update({
     id: req.body.id
 }))
 
-client.post('/board/update', req => query.update({
-    type: BOARD_TYPE, 
-    title: req.body.title, 
-    body: req.body.body,
-    author: req.body.author,
-    tags: req.body.tags,
+client.post('/delete', req => query.deleteQry({
     id: req.body.id
 }))
 
-client.post('/blog/delete', req => query.deleteQry({
+client.post('/view', req => query.view({
     id: req.body.id
 }))
 
-client.post('/board/delete', req => query.deleteQry({
-    id: req.body.id
-}))
-
-client.post('/board/view', req => query.view({
-    id: req.body.id
-}))
-
-client.post('/board/likenum', req => query.view({
+client.post('/likenum', req => query.likenum({
     id: req.body.id
 }))

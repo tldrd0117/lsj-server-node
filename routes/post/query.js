@@ -23,15 +23,14 @@ const insert = (obj) => ({
 
 const update = (obj) => ({
     text: `UPDATE Post 
-            SET type=$1, 
-                title=$2, 
-                body=$3, 
-                author=$4, 
-                tags=$5, 
+            SET title=$1, 
+                body=$2, 
+                author=$3, 
+                tags=$4, 
                 update_time=now() 
-            WHERE id=$6 
+            WHERE id=$5 
             RETURNING id`,
-    values: [obj.type, obj.title, obj.body, obj.author, obj.tags, obj.id]
+    values: [obj.title, obj.body, obj.author, obj.tags, obj.id]
 })
 
 const deleteQry = (obj) => ({
@@ -48,7 +47,7 @@ const view = (obj) => ({
             RETURNING id`,
     values: [obj.id]
 })
-const like = (obj) => ({
+const likenum = (obj) => ({
     text: `UPDATE Post
             SET likenum=likenum+1
             WHERE id=$1
@@ -62,5 +61,5 @@ module.exports = {
     update,
     deleteQry,
     view,
-    like
+    likenum
 }
