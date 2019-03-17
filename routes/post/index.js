@@ -11,7 +11,7 @@ const BOARD_TYPE = 2;
 
 client.get('/blog', req => query.selectAll({
     type: BLOG_TYPE
-}), function(req, res, next){
+}), async function(req, res, next){
     console.log(req.locals.rows)
     res.status(200).json(req.locals.rows);
 })
