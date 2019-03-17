@@ -30,7 +30,7 @@ class Client {
     post (path, getObj, result) {
         result = result || this.resJson;
         this.router.post(path, async (req, res, next) => {
-            const rows = await this.queryWithTr(req, res, getObj);
+            const { rows } = await this.queryWithTr(req, res, getObj);
             res.locals.rows = rows;
             return Promise.resolve('next')
         },result);
@@ -39,7 +39,7 @@ class Client {
     put (path, getObj,result) {
         result = result || this.resJson;
         this.router.put(path, async (req, res, next) => {
-            await this.queryWithTr(req, res, getObj);
+            const { rows } = await this.queryWithTr(req, res, getObj);
             res.locals.rows = rows;
             return Promise.resolve('next')
         },result);
@@ -48,7 +48,7 @@ class Client {
     delete (path, getObj,result) {
         result = result || this.resJson;
         this.router.delete(path, async (req, res, next) => {
-            await this.queryWithTr(req, res, getObj);
+            const { rows } = await this.queryWithTr(req, res, getObj);
             res.locals.rows = rows;
             return Promise.resolve('next')
         },result);
@@ -59,6 +59,7 @@ class Client {
         this.router.get(path, async (req, res, next) =>{
             const { rows } = await this.db.query(getObj(req));
             res.locals.rows = rows;
+            console.log(rows)
             return Promise.resolve('next')
         },result)
     }
