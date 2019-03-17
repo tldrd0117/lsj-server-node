@@ -16,6 +16,7 @@ passport.use(new LocalStrategy({
                 userid: username
             }))
             console.log(user);
+            console.log(user.length);
             if(!user){
                 return done(null, false, {message: 'internal Error'})
             }
