@@ -16,18 +16,22 @@ passport.use(new LocalStrategy({
                 userid: username
             }))
             console.log(user);
-            if(!user || user.length <= 0){
+            if(!user){
+                return done(null, false, {message: 'internal Error'})
+            }
+            if( user.length <= 0 ){
                 return done(null, false, {message: 'No User'})
             }
+            const match = await user[0].password === password;
+            if(!match){
+                return done(null, false, {message: 'No match password'})
+            }
+            return done(null, user);
         } catch(e) {
             return done(e);
         }
 
-        let match = await user.password === password;
-        if(!match){
-            return done(null, false, {message: 'No match password'})
-        }
-        return done(null, user);
+        
     }
 ));
 

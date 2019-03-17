@@ -11,7 +11,7 @@
 const insert = (obj) => ({
     text: `INSERT INTO 
                 APP_USER(userid, password, name, email, authority) 
-            VALUES ($1, $2, $3, $4, $5) RETURNING id`,
+            VALUES ($1, $2, $3, $4, $5) RETURNING *`,
     values: [obj.userid, obj.password, obj.name, obj.email, obj.authority]
 })
 
