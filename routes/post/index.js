@@ -1,5 +1,5 @@
 const query = require('./query')
-const client = require('../client.js');
+const client = require('./client');
 
 module.exports = client.router;
 

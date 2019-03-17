@@ -1,6 +1,6 @@
 const Router = require('express-promise-router');
 const router = new Router();
-const db = require('../db');
+const db = require('../../db');
 
 class Client {
     constructor({router, db}){
@@ -8,7 +8,7 @@ class Client {
         this.db = db;
     }
     async queryWithTr(req, res, getObj) {
-        const dbClient = await this.db.connect();
+        const dbClient = await this.db.getClient();
         try{
             await dbClient.query('BEGIN');
             const { rows } = await dbClient.query(getObj(req));

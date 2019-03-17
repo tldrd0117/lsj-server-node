@@ -1,3 +1,18 @@
+// Table "public.post"
+// Column    |            Type             | Collation | Nullable |             Default
+// -------------+-----------------------------+-----------+----------+----------------------------------
+// id          | integer                     |           | not null | nextval('post_id_seq'::regclass)
+// type        | integer                     |           | not null |
+// title       | text                        |           | not null |
+// body        | text                        |           | not null |
+// create_time | timestamp without time zone |           | not null | CURRENT_TIMESTAMP
+// author      | text                        |           |          | 'lsj'::text
+// tags        | text                        |           |          |
+// update_time | timestamp without time zone |           |          |
+// view        | integer                     |           |          |
+// likenum     | integer                     |           |          |
+// Indexes:
+//  "post_pkey" PRIMARY KEY, btree (id)
 const selectAll = (obj)=>({
     text: `SELECT 
                 title, 
