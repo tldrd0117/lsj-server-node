@@ -22,53 +22,45 @@ class Client {
             dbClient.release()
         };
     }
+
+    async resJson(req, res) {
+        res.status(200).json(req.locals.rows)
+    }
     
-    post (path, getObj, sub) {
+    post (path, getObj, result) {
+        result = result || this.resJson;
         this.router.post(path, async (req, res, next) => {
             const rows = await this.queryWithTr(req, res, getObj);
-            if(!sub){
-                res.status(200).json(rows)
-            } else {
-                res.locals.rows = rows;
-                return Promise.resolve('next')
-            }
-        },sub);
+            res.locals.rows = rows;
+            return Promise.resolve('next')
+        },result);
     }
 
-    put (path, getObj,sub) {
+    put (path, getObj,result) {
+        result = result || this.resJson;
         this.router.put(path, async (req, res, next) => {
             await this.queryWithTr(req, res, getObj);
-            if(!sub){
-                res.status(200).json(rows)
-            } else {
-                res.locals.rows = rows;
-                return Promise.resolve('next')
-            }
-        },sub);
+            res.locals.rows = rows;
+            return Promise.resolve('next')
+        },result);
     }
 
-    delete (path, getObj,sub) {
+    delete (path, getObj,result) {
+        result = result || this.resJson;
         this.router.delete(path, async (req, res, next) => {
             await this.queryWithTr(req, res, getObj);
-            if(!sub){
-                res.status(200).json(rows)
-            } else {
-                res.locals.rows = rows;
-                return Promise.resolve('next')
-            }
-        },sub);
+            res.locals.rows = rows;
+            return Promise.resolve('next')
+        },result);
     }
 
-    get (path, getObj, sub) {
+    get (path, getObj, result) {
+        result = result || this.resJson;
         this.router.get(path, async (req, res, next) =>{
             const { rows } = await this.db.query(getObj(req));
-            if(!sub) {
-                res.status(200).json(rows);
-            } else {
-                res.locals.rows = rows;
-                next(rows);
-            }
-        },sub)
+            res.locals.rows = rows;
+            return Promise.resolve('next')
+        },result)
     }
 }
 
