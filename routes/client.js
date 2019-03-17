@@ -66,7 +66,7 @@ class Client {
                 res.status(200).json(rows);
             } else {
                 res.locals.rows = rows;
-                return Promise.resolve('next');
+                next(rows);
             }
         },sub)
     }
