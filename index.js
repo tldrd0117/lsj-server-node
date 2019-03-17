@@ -2,10 +2,9 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const passport = require('passport');
-const session = require("express-session"),
+const session = require("express-session");
 
-
-const mountRoutes = require('./routes')
+const mountRoutes = require('./routes');
 
 const port = process.env.PORT || 3000;
 
