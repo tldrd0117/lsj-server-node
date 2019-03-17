@@ -12,7 +12,7 @@ passport.use(new LocalStrategy({
     async function(username, password, done) {
         try{
             const client = await db.getClient();
-            const user = await client.query(query.selectId({
+            const { rows: user } = await client.query(query.selectId({
                 userid: username
             }))
             console.log(user);
