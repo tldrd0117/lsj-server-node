@@ -29,7 +29,8 @@ class Client {
             if(!sub){
                 res.status(200).json(rows)
             } else {
-                return Promise.resolve(rows)
+                res.locals.rows = rows;
+                return Promise.resolve('next')
             }
         });
     }
@@ -40,7 +41,8 @@ class Client {
             if(!sub){
                 res.status(200).json(rows)
             } else {
-                return Promise.resolve(rows)
+                res.locals.rows = rows;
+                return Promise.resolve('next')
             }
         });
     }
@@ -51,7 +53,8 @@ class Client {
             if(!sub){
                 res.status(200).json(rows)
             } else {
-                return Promise.resolve(rows)
+                res.locals.rows = rows;
+                return Promise.resolve('next')
             }
         });
     }
@@ -59,8 +62,12 @@ class Client {
     get (path, getObj, sub) {
         this.router.get(path, async (req, res, next) =>{
             const { rows } = await this.db.query(getObj(req));
-            if(!sub) res.status(200).json(rows);
-            else return Promise.resolve(rows)
+            if(!sub) {
+                res.status(200).json(rows);
+            } else {
+                res.locals.rows = rows;
+                return Promise.resolve('next');
+            }
         })
     }
 }

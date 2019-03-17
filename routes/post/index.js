@@ -11,7 +11,10 @@ const BOARD_TYPE = 2;
 
 client.get('/blog', req => query.selectAll({
     type: BLOG_TYPE
-}))
+}), function(req, res, next){
+    console.log(req.locals.rows)
+    res.status(200).json(req.locals.rows);
+})
 
 client.get('/board', req => query.selectAll({
     type: BOARD_TYPE
