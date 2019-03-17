@@ -28,7 +28,24 @@ passport.use(new LocalStrategy({
         }
         return done(null, user);
     }
-))
+));
+
+passport.serializeUser(function(user, done){
+    done(null, user.userid);
+})
+passport.deserializeUser( async function(userid, done){
+    try{
+        const user = await client.query(query.selectId({
+            userid: userid
+        }))
+        if(!user) {
+            return done(new Error('deserializeUser: not user'))
+        }
+        done(null, user);
+    } catch (e) {
+        done(e)
+    }
+})
 module.exports = {
     passport,
     router

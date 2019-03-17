@@ -1,6 +1,9 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const passport = require('passport');
+const session = require("express-session"),
+
 
 const mountRoutes = require('./routes')
 
@@ -10,6 +13,10 @@ const bodyParser = require('body-parser');
 
 app.use(bodyParser.json());
 app.use(cors());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(session({ secret : 'whatissession'}))
+app.use(passport.initialize())
+app.use(passport.session())
 //body logger
 app.use((req, res, next) => {
     console.log(req.body)
