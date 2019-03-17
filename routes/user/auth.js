@@ -15,6 +15,7 @@ passport.use(new LocalStrategy({
             const user = await client.query(query.selectId({
                 userid: username
             }))
+            console.log(user);
             if(!user){
                 return done(null, false, {message: 'No User'})
             }
