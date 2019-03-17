@@ -32,7 +32,7 @@ class Client {
                 res.locals.rows = rows;
                 return Promise.resolve('next')
             }
-        });
+        },sub);
     }
 
     put (path, getObj,sub) {
@@ -44,7 +44,7 @@ class Client {
                 res.locals.rows = rows;
                 return Promise.resolve('next')
             }
-        });
+        },sub);
     }
 
     delete (path, getObj) {
@@ -56,7 +56,7 @@ class Client {
                 res.locals.rows = rows;
                 return Promise.resolve('next')
             }
-        });
+        },sub);
     }
 
     get (path, getObj, sub) {
@@ -68,7 +68,7 @@ class Client {
                 res.locals.rows = rows;
                 return Promise.resolve('next');
             }
-        })
+        },sub)
     }
 }
 
