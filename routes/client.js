@@ -47,7 +47,7 @@ class Client {
         },sub);
     }
 
-    delete (path, getObj) {
+    delete (path, getObj,sub) {
         this.router.delete(path, async (req, res, next) => {
             await this.queryWithTr(req, res, getObj);
             if(!sub){
