@@ -24,7 +24,7 @@ class Client {
     }
 
     async resJson(req, res) {
-        res.status(200).json(req.locals.rows)
+        res.status(200).json(res.locals.rows)
     }
     
     post (path, getObj, result) {
@@ -59,7 +59,6 @@ class Client {
         this.router.get(path, async (req, res, next) =>{
             const { rows } = await this.db.query(getObj(req));
             res.locals.rows = rows;
-            console.log(rows)
             return Promise.resolve('next')
         },result)
     }
