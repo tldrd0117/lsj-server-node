@@ -16,7 +16,7 @@ passport.use(new LocalStrategy({
                 userid: username
             }))
             console.log(user);
-            if(!user){
+            if(!user || user.length <= 0){
                 return done(null, false, {message: 'No User'})
             }
         } catch(e) {
