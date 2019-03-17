@@ -1,6 +1,6 @@
 const Router = require('express-promise-router');
 const router = new Router();
-const db = require('../../db');
+const db = require('../db');
 
 class Client {
     constructor({router, db}){
@@ -13,8 +13,7 @@ class Client {
             await dbClient.query('BEGIN');
             const { rows } = await dbClient.query(getObj(req));
             await dbClient.query('COMMIT');
-            res.status(200).json(rows);
-
+            return rows;
         } catch (e) {
             await dbClient.query('ROLLBACK');
             res.status(500).send('error: ' + e);
@@ -24,28 +23,44 @@ class Client {
         };
     }
     
-    post (path, getObj) {
+    post (path, getObj, sub) {
         this.router.post(path, async (req, res, next) => {
-            await this.queryWithTr(req, res, getObj);
+            const rows = await this.queryWithTr(req, res, getObj);
+            if(!sub){
+                res.status(200).json(rows)
+            } else {
+                return Promise.resolve(rows)
+            }
         });
     }
 
-    put (path, getObj) {
+    put (path, getObj,sub) {
         this.router.put(path, async (req, res, next) => {
             await this.queryWithTr(req, res, getObj);
+            if(!sub){
+                res.status(200).json(rows)
+            } else {
+                return Promise.resolve(rows)
+            }
         });
     }
 
     delete (path, getObj) {
         this.router.delete(path, async (req, res, next) => {
             await this.queryWithTr(req, res, getObj);
+            if(!sub){
+                res.status(200).json(rows)
+            } else {
+                return Promise.resolve(rows)
+            }
         });
     }
 
-    get (path, getObj) {
-        this.router.get(path, async (req, res) =>{
+    get (path, getObj, sub) {
+        this.router.get(path, async (req, res, next) =>{
             const { rows } = await this.db.query(getObj(req));
-            res.status(200).json(rows);
+            if(!sub) res.status(200).json(rows);
+            else return Promise.resolve(rows)
         })
     }
 }

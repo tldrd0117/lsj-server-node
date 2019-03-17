@@ -1,6 +1,6 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const query = require('./query')
+const query = require('../user/query')
 const Router = require('express-promise-router');
 const db = require('../../db')
 const router = new Router();
