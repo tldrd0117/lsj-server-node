@@ -7,51 +7,54 @@ const router = new Router();
 
 passport.use(new LocalStrategy({
         usernameField: 'userid',
-        session: false
     },
     async function(username, password, done) {
+        const client = await db.getClient();
         try{
-            const client = await db.getClient();
-            const { rows: user } = await client.query(query.selectId({
+            const { rows } = await client.query(query.selectId({
                 userid: username
             }))
-            console.log(user);
-            console.log(user.length);
-            if(!user){
+            if(!rows){
                 return done(null, false, {message: 'internal Error'})
             }
-            if( user.length <= 0 ){
-                return done(null, false, {message: 'No User'})
+            if( rows.length <= 0 ){
+                return done(null, false, {message: 'No Match User'})
             }
-            const match = await user[0].password === password;
+            const user = rows[0];
+            const match = await user.password === password;
             if(!match){
-                return done(null, false, {message: 'No match password'})
+                return done(null, false, {message: 'No Match password'})
             }
             return done(null, user);
         } catch(e) {
             return done(e);
-        }
-
-        
+        } finally {
+            client.release()
+        };
     }
 ));
 
 passport.serializeUser(function(user, done){
-    console.log(user);
+    console.log('serializeUser',user);
     done(null, user.userid);
 })
 passport.deserializeUser( async function(userid, done){
+    const client = await db.getClient();
     try{
-        const user = await client.query(query.selectId({
+        const { rows } = await client.query(query.selectId({
             userid: userid
         }))
-        if(!user) {
+        if(!rows || rows.length <= 0) {
             return done(new Error('deserializeUser: not user'))
         }
+        const user = rows[0];
+        console.log('deserializeUser',user)
         done(null, user);
     } catch (e) {
         done(e)
-    }
+    } finally {
+        client.release()
+    };
 })
 module.exports = {
     passport,
