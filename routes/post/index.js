@@ -1,6 +1,6 @@
 const query = require('./query')
 const client = require('../client');
-
+const QueryClient = require('../QueryClient');
 module.exports = client.router;
 
 //to_char(create_time, 'YYYY-MM-DD HH24:MI:SS') as create_time
@@ -9,49 +9,51 @@ module.exports = client.router;
 const BLOG_TYPE = 1;
 const BOARD_TYPE = 2;
 
-client.get('/blog', req => query.selectAll({
-    type: BLOG_TYPE
-}), async function(req, res, next){
-    console.log(res.locals.rows)
-    res.status(200).json(res.locals.rows);
-})
+const queryClient = new QueryClient(client, query);
 
-client.get('/board', req => query.selectAll({
-    type: BOARD_TYPE
-}))
-
-client.post('/blog', req => query.insert({
-    type: BLOG_TYPE, 
-    title: req.body.title, 
-    body: req.body.body,
-    author: req.body.author,
-    tags: req.body.tags
-}))
-
-client.post('/board', req => query.insert({
-    type: BOARD_TYPE, 
-    title: req.body.title, 
-    body: req.body.body,
-    author: req.body.author,
-    tags: req.body.tags
-}))
-
-client.post('/update', req => query.update({
-    title: req.body.title, 
-    body: req.body.body,
-    author: req.body.author,
-    tags: req.body.tags,
-    id: req.body.id
-}))
-
-client.post('/delete', req => query.deleteQry({
-    id: req.body.id
-}))
-
-client.post('/view', req => query.view({
-    id: req.body.id
-}))
-
-client.post('/likenum', req => query.likenum({
-    id: req.body.id
-}))
+queryClient.defineSimples([
+{
+    method: 'get',
+    path: '/blog',
+    query: 'selectAll',
+    globalParam: {
+        type: BLOG_TYPE
+    }
+},{
+    method: 'get',
+    path: '/board',
+    query: 'selectAll',
+    globalParam: {
+        type: BOARD_TYPE
+    }
+},{
+    method: 'post',
+    path: '/blog',
+    query: 'insert',
+    globalParam: {
+        type: BLOG_TYPE
+    }
+},{
+    method: 'post',
+    path: '/board',
+    query: 'insert',
+    globalParam: {
+        type: BOARD_TYPE
+    }
+},{
+    method: 'post',
+    path: '/update',
+    query: 'update'
+},{
+    method: 'post',
+    path: '/delete',
+    query: 'deleteQry'
+},{
+    method: 'post',
+    path: '/view',
+    query: 'view'
+},{
+    method: 'post',
+    path: '/likenum',
+    query: 'likenum'
+}])

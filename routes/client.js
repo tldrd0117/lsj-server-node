@@ -2,66 +2,76 @@ const Router = require('express-promise-router');
 const router = new Router();
 const db = require('../db');
 
+
 class Client {
     constructor({router, db}){
         this.router = router;
         this.db = db;
     }
-    async queryWithTr(req, res, getObj) {
-        const dbClient = await this.db.getClient();
-        try{
-            await dbClient.query('BEGIN');
-            const { rows } = await dbClient.query(getObj(req));
-            await dbClient.query('COMMIT');
-            return rows;
-        } catch (e) {
-            await dbClient.query('ROLLBACK');
-            res.status(500).send('error: ' + e);
-            throw e;
-        } finally {
-            dbClient.release()
-        };
+
+    resJson({res, rows}) {
+        return new Promise((resolve, reject) => {
+            res.status(200).json(rows)
+            resolve()
+        })
     }
 
-    async resJson(req, res) {
-        res.status(200).json(res.locals.rows)
+    query(getObj, args) {
+        args = args || {}
+        return ({req, res}) =>{
+            return new Promise( async (resolve, reject) => {
+                try{
+                    const target = getObj(req, res, args);
+                    if(!target){
+                        reject('check param Error')
+                        return;
+                    }
+                    const result = await db.query(target)
+                    if(result === null ) {
+                        reject('result is null');
+                        return;
+                    }
+                    res.locals.rows = result.rows;
+                    resolve({ res, rows: result.rows })
+                } catch(e){
+                    reject(e)
+                }
+            })
+        }
+    }
+
+    queryWithTr(getObj, args) {
+        args = args || {}
+        return ({req, res}) =>{
+            return new Promise( async (resolve, reject) => {
+                try{
+                    const target = getObj(req, res, args);
+                    if(!target){
+                        reject('check param Error')
+                        return;
+                    }
+                    const result = await db.queryWithTr(target)
+                    if(result === null ) {
+                        reject('result is null');
+                        return;
+                    }
+                    res.locals.rows = result.rows;
+                    resolve({ res, rows: result.rows })
+                } catch(e) {
+                    reject(e)
+                }
+            })
+        }
     }
     
-    post (path, getObj, result) {
-        result = result || this.resJson;
-        this.router.post(path, async (req, res, next) => {
-            const { rows } = await this.queryWithTr(req, res, getObj);
-            res.locals.rows = rows;
-            return Promise.resolve('next')
-        },result);
+    post (path, func) {
+        this.router.post(path, func);
     }
 
-    put (path, getObj,result) {
-        result = result || this.resJson;
-        this.router.put(path, async (req, res, next) => {
-            const { rows } = await this.queryWithTr(req, res, getObj);
-            res.locals.rows = rows;
-            return Promise.resolve('next')
-        },result);
+    get (path, func) {
+        this.router.get(path, func)
     }
-
-    delete (path, getObj,result) {
-        result = result || this.resJson;
-        this.router.delete(path, async (req, res, next) => {
-            const { rows } = await this.queryWithTr(req, res, getObj);
-            res.locals.rows = rows;
-            return Promise.resolve('next')
-        },result);
-    }
-
-    get (path, getObj, result) {
-        result = result || this.resJson;
-        this.router.get(path, async (req, res, next) =>{
-            const { rows } = await this.db.query(getObj(req));
-            res.locals.rows = rows;
-            return Promise.resolve('next')
-        },result)
-    }
+    
 }
 
 module.exports = new Client({router, db})

@@ -13,30 +13,36 @@
 // likenum     | integer                     |           |          |
 // Indexes:
 //  "post_pkey" PRIMARY KEY, btree (id)
-const selectAll = (obj)=>({
+
+const Query = require('../Query');
+
+const selectAll = new Query({
+    name: 'selectAll',
     text: `SELECT 
-                title, 
-                body, 
-                id, 
-                create_time, 
-                update_time, 
-                author, 
-                tags,
-                likenum,
-                view
-            FROM Post 
-            WHERE type=$1 
-            ORDER BY id DESC`,
-    values: [obj.type]
-});
-const insert = (obj) => ({
+            title, 
+            body, 
+            id, 
+            create_time, 
+            update_time, 
+            author, 
+            tags,
+            likenum,
+            view
+        FROM Post 
+        WHERE type=$1 
+        ORDER BY id DESC`,
+    params: ['type']
+})
+const insert = new Query({
+    name: 'insert',
     text: `INSERT INTO 
                 Post(type, title, body, author, tags) 
             VALUES ($1, $2, $3, $4, $5) RETURNING id`,
-    values: [obj.type, obj.title, obj.body, obj.author, obj.tags]
+    params: ['type', 'title', 'body', 'author', 'tags']
 })
 
-const update = (obj) => ({
+const update = new Query({
+    name: 'update',
     text: `UPDATE Post 
             SET title=$1, 
                 body=$2, 
@@ -45,36 +51,40 @@ const update = (obj) => ({
                 update_time=now() 
             WHERE id=$5 
             RETURNING id`,
-    values: [obj.title, obj.body, obj.author, obj.tags, obj.id]
+    params: ['title', 'body', 'author', 'tags', 'id']
 })
 
-const deleteQry = (obj) => ({
+const deleteQry = new Query({
+    name: 'deleteQry',
     text: `DELETE FROM Post 
             WHERE id = $1 
             RETURNING id`,
-    values: [obj.id]
+    params: ['id']
 })
 
-const view = (obj) => ({
+const view = new Query({
+    name: 'view',
     text: `UPDATE Post
             SET view=view+1
             WHERE id=$1
             RETURNING id`,
-    values: [obj.id]
+    params: ['id']
 })
-const likenum = (obj) => ({
+
+const likenum = new Query({
+    name: 'likenum',
     text: `UPDATE Post
             SET likenum=likenum+1
             WHERE id=$1
             RETURNING id`,
-    values: [obj.id]
+    params: ['id']
 })
 
 module.exports = {
-    selectAll,
-    insert,
-    update,
-    deleteQry,
-    view,
-    likenum
-}
+    ...selectAll.makeRequestQuery(),
+    ...insert.makeRequestQuery(),
+    ...update.makeRequestQuery(),
+    ...deleteQry.makeRequestQuery(),
+    ...view.makeRequestQuery(),
+    ...likenum.makeRequestQuery()
+};

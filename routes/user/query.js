@@ -8,14 +8,18 @@
 // email       | text                        |           | not null | 
 // create_time | timestamp without time zone |           |          | 
 // authority   | text                        |           | not null | 
-const insert = (obj) => ({
+const Query = require('../Query');
+
+const insert = new Query({
+    name: 'insert',
     text: `INSERT INTO 
                 APP_USER(userid, password, name, email, authority) 
             VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-    values: [obj.userid, obj.password, obj.name, obj.email, obj.authority]
+    params: ['userid', 'password', 'name', 'email', 'authority']
 })
 
-const selectId = (obj) => ({
+const selectId = new Query({
+    name: 'selectId',
     text: `SELECT 
                 id,
                 userid,
@@ -26,11 +30,11 @@ const selectId = (obj) => ({
                 authority
             FROM APP_USER
             WHERE userid=$1`,
-    values: [obj.userid]
+    params: ['userid']
 })
 
 module.exports = {
-    insert,
-    selectId
-}
+    ...insert.makeRequestQuery(),
+    ...selectId.makeRequestQuery()
+};
 

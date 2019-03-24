@@ -25,6 +25,27 @@ app.use((req, res, next) => {
 })
 
 mountRoutes(app);
+//logErrors
+app.use((err, req, res, next) => {
+    console.error(err);
+    next(err);
+})
+//clientErrorHandler
+app.use((err, req, res, next) => {
+    if(req.xhr) {
+        res.status(500).send({error: 'client Error'});
+    } else {
+        next(err);
+    }
+})
+//all Error Handler
+app.use((err, req, res, next) => {
+    if(res.locals.error){
+        res.status(500).send({error: res.locals.error});
+    } else {
+        res.status(500).send({error: 'internal error'});
+    }
+})
 
 app.listen(port, function() {
     console.log('app listening!');

@@ -1,9 +1,10 @@
-const query = require('../user/query')
+const query = require('../user/query');
 const {router, passport} = require('./auth');
+const client = require('../client');
 
 module.exports = router;
 
-router.post('/login', function(req, res, next){
+router.post('/login', async (req, res, next) => {
     passport.authenticate('local',
     function(err, user, info){
         if (err) { return next(err); }

@@ -1,21 +1,27 @@
 const query = require('./query')
 const client = require('../client');
+const QueryClient = require('../QueryClient');
 
 module.exports = client.router;
 
-client.post('/checkId', req => query.selectId({
-    userid: req.body.userid, 
-}), async (req, res) => {
-    res.status(200).json({
-        duplication: res.locals.rows.length > 0
-    })
-})
+const queryClient = new QueryClient(client, query);
 
-//userid, password, name, email, authority
-client.post('/signUp', req => query.insert({
-    userid: req.body.userid,
-    password: req.body.password,
-    name: req.body.name,
-    email: req.body.email,
-    authority: 'normal'
-}));
+queryClient.defineSequence([{
+    method: 'post',
+    path: '/signUp',
+    query: 'selectId',
+    result(user){
+        console.log('user', user)
+        return user.length === 0;
+    }
+},{
+    query: 'insert',
+    globalParam: {
+        authority: 'normal'
+    },
+    result(user, req, res){
+        res.status(200).json(user)
+        return false;
+    }
+}])
+
