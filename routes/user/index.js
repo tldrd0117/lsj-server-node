@@ -10,18 +10,20 @@ queryClient.defineSequence([{
     method: 'post',
     path: '/signUp',
     query: 'selectId',
-    result(user){
-        console.log('user', user)
-        return user.length === 0;
+    transaction: false,
+    result(user, req, res, next){
+        if( user.length === 0){
+            next();
+        }
     }
 },{
     query: 'insert',
+    transaction: true,
     globalParam: {
         authority: 'normal'
     },
     result(user, req, res){
         res.status(200).json(user)
-        return false;
     }
 }])
 

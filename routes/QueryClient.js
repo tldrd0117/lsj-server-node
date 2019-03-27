@@ -3,10 +3,18 @@ module.exports = class QueryClient{
         this.client = client;
         this.query = query;
     }
-    defineSimple ({method, path, query: queryName, globalParam}) {
+    defineSimple ({method, path, query: queryName, globalParam, transaction}) {
+        transaction = transaction || false
         this.client[method](path, async (req, res, next) => {
             try{
-                const result = await this.queryFromDb({method, queryName, globalParam, req, res})
+                const result = 
+                    await this.queryFromDb({
+                        transaction, 
+                        queryName, 
+                        globalParam, 
+                        req, 
+                        res
+                    })
                 await this.client.resJson(result);
             } catch(e) {
                 return Promise.reject(e);
@@ -21,39 +29,81 @@ module.exports = class QueryClient{
         this.define(values);
     }
 
-    define({method, path, query: queryName, globalParam, result, next}){
+    define({method, 
+            path, 
+            query: queryName, 
+            globalParam, 
+            result, 
+            next, 
+            transaction}){
         this.client[method](path, async (req, res, appNext) => {
             try{
-                const queryProcess = (queryName, globalParam, result, next) => {
-                    return new Promise( async (resolve, reject) => {
-                        try{
-                            const queryResult = await this.queryFromDb({method, queryName, globalParam, req, res})
-                            let ok = true;
-                            if(result){
-                                if(!queryResult){
-                                    ok = false;
-                                }
-                                else{
-                                    ok = result(queryResult.rows, req, res);
-                                }
-                            } 
-                            if(next && ok){
-                                if(!next.result) throw new Error('next result not exist');
-                                await queryProcess(next.query, next.globalParam, next.result, next.next)
-                            }
-                            resolve();
-                        } catch(e) {
-                            reject(e)
-                        }
-                    })
-                }
-                await queryProcess(queryName, globalParam, result, next);
+                await this.queryProcess({queryName, globalParam, result, next, transaction, req, res});
             } catch(e) {
                 return Promise.reject(e);
             }
         })
     }
-    queryFromDb({method, queryName, globalParam, req, res}){
+    queryProcess({queryName, globalParam, result, next, transaction, req, res}){
+        return new Promise( async (resolve, reject) => {
+            try{
+                console.log(queryName);
+                const queryResult = 
+                    await this.queryFromDb({
+                        transaction, 
+                        queryName, 
+                        globalParam, 
+                        req, 
+                        res
+                    })
+                if(result && queryResult){
+                    result(queryResult.rows, req, res, 
+                        this.makeNextCallback({
+                            resolve, 
+                            reject, 
+                            nextParam: next, 
+                            req, 
+                            res
+                        })
+                    );
+                }
+            } catch(e) {
+                reject(e);
+            }
+        })
+    }
+
+    makeNextCallback({resolve, reject, nextParam, req, res}){
+        return async () => {
+            try{
+                if(!nextParam){
+                    throw new Error('next not exist');
+                }
+                if(!nextParam.result){
+                    throw new Error('next result not exist');
+                }
+                const { query, 
+                        globalParam, 
+                        result, 
+                        next, 
+                        transaction } = nextParam;
+                await this.queryProcess({
+                        queryName: query, 
+                        globalParam, 
+                        result, 
+                        next, 
+                        transaction, 
+                        req, 
+                        res})
+                resolve();
+            } catch(e) {
+                reject(e);
+            }
+        }
+        
+    }
+
+    queryFromDb({transaction, queryName, globalParam, req, res}){
         return new Promise( async (resolve, reject) => {
             let result = null;
             try{
@@ -62,13 +112,14 @@ module.exports = class QueryClient{
                     return;
                 }
                 globalParam = globalParam || {};
-                if( method ==='get' ){
+                if( !transaction ){
                     result = await this.client.query(this.query[queryName], globalParam)({req,res});
-                } else if( method === 'post') {
+                } else {
                     result = await this.client.queryWithTr(this.query[queryName], globalParam)({req, res});
                 }
                 resolve(result);
             } catch(e) {
+                console.log('err')
                 reject(e);
             } 
         })
