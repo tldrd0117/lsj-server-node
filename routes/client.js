@@ -64,12 +64,12 @@ class Client {
         }
     }
     
-    post (path, func) {
-        this.router.post(path, func);
+    post (path, ...func) {
+        this.router.post(path, ...func);
     }
 
-    get (path, func) {
-        this.router.get(path, func)
+    get (path, ...func) {
+        this.router.get(path, ...func)
     }
     
 }

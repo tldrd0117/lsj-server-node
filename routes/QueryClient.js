@@ -21,6 +21,31 @@ module.exports = class QueryClient{
             }
         })
     }
+
+    defineSimples (array) {
+        array.forEach((item) => {
+            this.defineSimple(item)
+        })
+    }
+
+    defines (array) {
+        array.forEach(item => {
+            this.define(item)
+        })
+    }
+
+    defineAll ( array ) {
+        array.forEach(item => {
+            const { sequence, define: defineTarget } = item;
+            if(sequence){
+                this.defineSequence(defineTarget);
+            } else {
+                this.define(defineTarget);
+            }
+        })
+        
+    }
+
     defineSequence(array){
         const values = array.reduce(function(acc, item){
             acc.next = item;    
@@ -32,17 +57,22 @@ module.exports = class QueryClient{
     define({method, 
             path, 
             query: queryName, 
-            globalParam, 
+            globalParam,
+            middleware,
             result, 
             next, 
             transaction}){
-        this.client[method](path, async (req, res, appNext) => {
-            try{
-                await this.queryProcess({queryName, globalParam, result, next, transaction, req, res});
-            } catch(e) {
-                return Promise.reject(e);
-            }
-        })
+            const argsArray = [path]
+            .concat(middleware || [])
+            .concat( async (req, res, appNext) => {
+                try{
+                    await this.queryProcess({queryName, globalParam, result, next, transaction, req, res});
+                } catch(e) {
+                    return Promise.reject(e);
+                }
+            })
+            console.log(this.client[method])
+            this.client[method].apply(this.client, argsArray);
     }
     queryProcess({queryName, globalParam, result, next, transaction, req, res}){
         return new Promise( async (resolve, reject) => {
@@ -66,6 +96,8 @@ module.exports = class QueryClient{
                             res
                         })
                     );
+                } else if (queryResult) {
+                    this.client.resJson(queryResult);
                 }
             } catch(e) {
                 reject(e);
@@ -124,10 +156,5 @@ module.exports = class QueryClient{
             } 
         })
         
-    }
-    defineSimples (array) {
-        array.forEach((item) => {
-            this.defineSimple(item)
-        })
     }
 }

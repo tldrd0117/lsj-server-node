@@ -1,6 +1,7 @@
 const query = require('./query')
 const client = require('../client');
 const QueryClient = require('../QueryClient');
+const { blockNotLogin, json } = require('../middlewares');
 module.exports = client.router;
 
 //to_char(create_time, 'YYYY-MM-DD HH24:MI:SS') as create_time
@@ -11,49 +12,84 @@ const BOARD_TYPE = 2;
 
 const queryClient = new QueryClient(client, query);
 
-queryClient.defineSimples([
-{
-    method: 'get',
-    path: '/blog',
-    query: 'selectAll',
-    globalParam: {
-        type: BLOG_TYPE
+queryClient.defineAll([{
+    define: {
+        method: 'get',
+        path: '/blog',
+        query: 'selectAll',
+        globalParam: {
+            type: BLOG_TYPE
+        },
+        // middleware: [blockNotLogin()],
+        result: json()
     }
 },{
-    method: 'get',
-    path: '/board',
-    query: 'selectAll',
-    globalParam: {
-        type: BOARD_TYPE
+   define: {
+        method: 'get',
+        path: '/board',
+        query: 'selectAll',
+        globalParam: {
+            type: BOARD_TYPE
+        },
+        result: json()
+   } 
+},{
+    define: {
+        method: 'post',
+        transaction: true,
+        path: '/blog',
+        query: 'insert',
+        globalParam: {
+            type: BLOG_TYPE
+        },
+        middleware: blockNotLogin(),
+        result: json()
     }
 },{
-    method: 'post',
-    path: '/blog',
-    query: 'insert',
-    globalParam: {
-        type: BLOG_TYPE
+    define: {
+        method: 'post',
+        transaction: true,
+        path: '/board',
+        query: 'insert',
+        globalParam: {
+            type: BOARD_TYPE
+        },
+        middleware: blockNotLogin(),
+        result: json()
     }
 },{
-    method: 'post',
-    path: '/board',
-    query: 'insert',
-    globalParam: {
-        type: BOARD_TYPE
+    define: {
+        method: 'post',
+        transaction: true,
+        path: '/update',
+        query: 'update',
+        middleware: blockNotLogin(),
+        result: json()
     }
 },{
-    method: 'post',
-    path: '/update',
-    query: 'update'
+    define: {
+        method: 'post',
+        transaction: true,
+        path: '/delete',
+        query: 'deleteQry',
+        middleware: blockNotLogin(),
+        result: json()
+
+    }
 },{
-    method: 'post',
-    path: '/delete',
-    query: 'deleteQry'
+    define: {
+        method: 'post',
+        transaction: true,
+        path: '/view',
+        query: 'view',
+        result: json()
+    }
 },{
-    method: 'post',
-    path: '/view',
-    query: 'view'
-},{
-    method: 'post',
-    path: '/likenum',
-    query: 'likenum'
+    define: {
+        method: 'post',
+        transaction: true,
+        path: '/likenum',
+        query: 'likenum',
+        result: json()
+    }
 }])

@@ -12,10 +12,18 @@ router.post('/login', async (req, res, next) => {
         req.login(user, function(err){
             if(err) return next(err);
             return res.status(200).json(user);
+
         })
     })(req, res, next)
 })
 
 router.get('/logout', function(req, res){
     req.logout();
+    res.status(200).json({info: 'logout'});
 })
+
+router.post('/autoLogin', function(req, res){
+    const isLogged = req.isAuthenticated();
+    console.log( 'isLogged' );
+    res.status(200).json({login: isLogged, name: isLogged ? req.user.name : ''});
+});

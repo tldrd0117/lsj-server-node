@@ -35,10 +35,12 @@ passport.use(new LocalStrategy({
 ));
 
 passport.serializeUser(function(user, done){
-    console.log('serializeUser',user);
+    console.log('serialize', user.userid)
     done(null, user.userid);
 })
 passport.deserializeUser( async function(userid, done){
+
+    console.log('deserialize', userid)
     const client = await db.getClient();
     try{
         const { rows } = await client.query(query.selectId({
@@ -48,7 +50,6 @@ passport.deserializeUser( async function(userid, done){
             return done(new Error('deserializeUser: not user'))
         }
         const user = rows[0];
-        console.log('deserializeUser',user)
         done(null, user);
     } catch (e) {
         done(e)
