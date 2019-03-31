@@ -71,7 +71,6 @@ module.exports = class QueryClient{
                     return Promise.reject(e);
                 }
             })
-            console.log(this.client[method])
             this.client[method].apply(this.client, argsArray);
     }
     queryProcess({queryName, globalParam, result, next, transaction, req, res}){
