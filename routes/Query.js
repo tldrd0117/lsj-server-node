@@ -22,8 +22,8 @@ module.exports = class Query{
             success: this.params.every((item, index)=>{
                 errorIndex = index;
                 return requestKeys.find((keys) => {
-                    return keys === item}
-                );
+                    return keys === item
+                });
             }),
             errorIndex
         }

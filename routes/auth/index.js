@@ -1,6 +1,7 @@
 const query = require('../user/query');
 const {router, passport} = require('./auth');
 const client = require('../client');
+const md5 = require('md5');
 
 module.exports = router;
 
@@ -25,5 +26,9 @@ router.get('/logout', function(req, res){
 router.post('/autoLogin', function(req, res){
     const isLogged = req.isAuthenticated();
     console.log( 'isLogged' );
-    res.status(200).json({login: isLogged, name: isLogged ? req.user.name : ''});
+    res.status(200).json({
+        login: isLogged, 
+        name: isLogged ? req.user.name : '',
+        emailHash: isLogged ? md5(req.user.email) : ''
+    });
 });
