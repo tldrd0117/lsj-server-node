@@ -15,8 +15,19 @@ const queryClient = new QueryClient(client, query);
 queryClient.defineAll([{
     define: {
         method: 'get',
-        path: '/blog',
+        path: '/blog/list',
         query: 'selectAll',
+        globalParam: {
+            type: BLOG_TYPE
+        },
+        // middleware: [blockNotLogin()],
+        result: json()
+    }
+},{
+    define: {
+        method: 'get',
+        path: '/blog/detail',
+        query: 'selectOne',
         globalParam: {
             type: BLOG_TYPE
         },
@@ -26,7 +37,7 @@ queryClient.defineAll([{
 },{
    define: {
         method: 'get',
-        path: '/board',
+        path: '/board/list',
         query: 'selectAll',
         globalParam: {
             type: BOARD_TYPE

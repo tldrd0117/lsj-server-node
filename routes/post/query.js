@@ -33,6 +33,24 @@ const selectAll = new Query({
         ORDER BY id DESC`,
     params: ['type']
 })
+const selectOne = new Query({
+    name: 'selectOne',
+    text: `SELECT 
+            title, 
+            body, 
+            id, 
+            create_time, 
+            update_time, 
+            author, 
+            tags,
+            likenum,
+            view
+        FROM Post 
+        WHERE type=$1 
+        AND id=$2
+        ORDER BY id DESC`,
+    params: ['type', 'id']
+})
 const insert = new Query({
     name: 'insert',
     text: `INSERT INTO 
@@ -82,6 +100,7 @@ const likenum = new Query({
 
 module.exports = {
     ...selectAll.makeRequestQuery(),
+    ...selectOne.makeRequestQuery(),
     ...insert.makeRequestQuery(),
     ...update.makeRequestQuery(),
     ...deleteQry.makeRequestQuery(),

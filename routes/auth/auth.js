@@ -11,7 +11,7 @@ passport.use(new LocalStrategy({
     async function(username, password, done) {
         const client = await db.getClient();
         try{
-            const { rows } = await client.query(query.selectId({
+            const { rows } = await client.query(query.selectId(undefined, undefined, {
                 userid: username
             }))
             if(!rows){
@@ -43,7 +43,7 @@ passport.deserializeUser( async function(userid, done){
     console.log('deserialize', userid)
     const client = await db.getClient();
     try{
-        const { rows } = await client.query(query.selectId({
+        const { rows } = await client.query(query.selectId(undefined, undefined, {
             userid: userid
         }))
         if(!rows || rows.length <= 0) {

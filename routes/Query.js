@@ -33,21 +33,30 @@ module.exports = class Query{
         const makeQuery = this.makeQueryFunc();
         return {
             [this.name]: (req, res, args) => {
-                let reqValue = null;
+                let reqValue = {};
                 args = args || {}
-                if(req.body){
+                console.log(args);
+                if(req && req.query){
+                    reqValue = {
+                        ...req.query,
+                        ...reqValue
+                    }
+                }
+                if(req && req.body){
                     reqValue = {
                         ...req.body,
-                        ...args
+                        ...reqValue
                     }
-                } else {
+                } 
+                if(args) {
                     reqValue = {
-                        ...req,
-                        ...args
+                        ...args,
+                        ...reqValue
                     }
-
                 }
+                console.log(reqValue)
                 const check = this.checkParams(reqValue);
+                console.log(check)
                 if(check.success){
                     return makeQuery(reqValue);
                 }

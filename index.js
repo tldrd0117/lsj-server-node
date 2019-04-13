@@ -12,7 +12,8 @@ const bodyParser = require('body-parser');
 
 
 app.use(bodyParser.json());
-var whitelist = ['http://localhost:8080', 'http://lsj.surge.sh', 'https://lsj.surge.sh']
+var whitelist = ['http://localhost:8080', 'http://lsj.surge.sh', 'https://lsj.surge.sh',
+'http://shj.surge.sh', 'https://shj.surge.sh']
 var corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
