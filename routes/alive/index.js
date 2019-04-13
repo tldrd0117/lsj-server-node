@@ -15,5 +15,28 @@ queryClient.defineAll([{
         transaction: false,
         result: json()
     }
-}])
+},{
+    define: {
+        method: 'get',
+        path: '/visit',
+        query: 'selectAll',
+        globalParam: {
+            type: 3
+        },
+        // middleware: [blockNotLogin()],
+        result: json()
+    }
+},{
+    define: {
+        method: 'get',
+        path: '/message',
+        query: 'selectAll',
+        globalParam: {
+            type: 4
+        },
+        // middleware: [blockNotLogin()],
+        result: json()
+    }
+}
+])
 
