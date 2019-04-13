@@ -13,7 +13,6 @@ queryClient.defineAll([{
         path: '/isAlive',
         query: 'insert',
         transaction: false,
-        middleware: blockNotLogin(),
         result: json()
     }
 }])
