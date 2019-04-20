@@ -98,6 +98,30 @@ const likenum = new Query({
     params: ['id']
 })
 
+const replySelectAll = new Query({
+    name: 'replySelectAll',
+    text: `SELECT 
+                post_reply.id, 
+                post_reply.postid, 
+                app_user.name, 
+                app_user.email, 
+                post_reply.create_time, 
+                post_reply.reply
+            FROM post_reply, app_user
+            WHERE post_reply.postid=$1 AND
+                post_reply.userid = app_user.id
+            ORDER BY post_reply.create_time DESC`,
+    params: ['postid']
+})
+
+const addReply = new Query({
+    name: 'addReply',
+    text: `INSERT INTO 
+            POST_REPLY(postid, userid, reply) 
+            VALUES ($1, $2, $3) RETURNING id`,
+    params: ['postid', 'userid', 'reply']
+})
+
 module.exports = {
     ...selectAll.makeRequestQuery(),
     ...selectOne.makeRequestQuery(),
@@ -105,5 +129,7 @@ module.exports = {
     ...update.makeRequestQuery(),
     ...deleteQry.makeRequestQuery(),
     ...view.makeRequestQuery(),
-    ...likenum.makeRequestQuery()
+    ...likenum.makeRequestQuery(),
+    ...replySelectAll.makeRequestQuery(),
+    ...addReply.makeRequestQuery()
 };

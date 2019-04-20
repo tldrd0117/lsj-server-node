@@ -8,11 +8,11 @@ const router = new Router();
 passport.use(new LocalStrategy({
         usernameField: 'userid',
     },
-    async function(username, password, done) {
+    async function(userid, password, done) {
         const client = await db.getClient();
         try{
             const { rows } = await client.query(query.selectId(undefined, undefined, {
-                userid: username
+                userid
             }))
             if(!rows){
                 return done(null, false, {message: 'internal Error'})

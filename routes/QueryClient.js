@@ -66,6 +66,9 @@ module.exports = class QueryClient{
             .concat(middleware || [])
             .concat( async (req, res, appNext) => {
                 try{
+                    if(typeof globalParam === 'function'){
+                        globalParam = globalParam(req)
+                    }
                     await this.queryProcess({queryName, globalParam, result, next, transaction, req, res});
                 } catch(e) {
                     return Promise.reject(e);

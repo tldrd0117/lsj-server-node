@@ -1,7 +1,7 @@
 const query = require('./query')
 const client = require('../client');
 const QueryClient = require('../QueryClient');
-const { blockNotLogin, json } = require('../middlewares');
+const { blockNotLogin, json, emailHash } = require('../middlewares');
 module.exports = client.router;
 
 //to_char(create_time, 'YYYY-MM-DD HH24:MI:SS') as create_time
@@ -30,6 +30,17 @@ queryClient.defineAll([{
         query: 'selectOne',
         globalParam: {
             type: BLOG_TYPE
+        },
+        // middleware: [blockNotLogin()],
+        result: json()
+    }
+},{
+    define: {
+        method: 'get',
+        path: '/board/detail',
+        query: 'selectOne',
+        globalParam: {
+            type: BOARD_TYPE
         },
         // middleware: [blockNotLogin()],
         result: json()
@@ -101,6 +112,28 @@ queryClient.defineAll([{
         transaction: true,
         path: '/likenum',
         query: 'likenum',
+        result: json()
+    }
+},{
+    define: {
+        method: 'get',
+        path: '/reply',
+        query: 'replySelectAll',
+        middleware: [emailHash()],
+        result: json()
+    }
+},{
+    define: {
+        method: 'post',
+        path: '/reply',
+        query: 'addReply',
+        globalParam(req) {
+            console.log(req)
+            return{
+                userid: req.user.id || ''
+            }
+        },
+        middleware: [blockNotLogin()],
         result: json()
     }
 }])
